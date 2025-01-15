@@ -3,7 +3,7 @@ import {
   mockTrackEventActionFields,
 } from '../../client/__mocks__'
 import { trackEvent } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -26,7 +26,7 @@ describe('Iterable - Track event', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await trackEvent.onActivityCreated(basePayload, onComplete, onError)
+    await trackEvent.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(
       IterableClientMockImplementation.eventsApi.trackEvent

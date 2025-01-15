@@ -3,7 +3,7 @@ import {
   SendbirdClientMockImplementation,
 } from '../../client/__mocks__'
 import { updateCustomerCustomFields } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -30,7 +30,7 @@ describe("Update customer's custom fields", () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await updateCustomerCustomFields.onActivityCreated(
+    await updateCustomerCustomFields.onActivityCreated!(
       basePayload,
       onComplete,
       onError

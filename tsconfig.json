@@ -7,15 +7,24 @@
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/tests": ["tests"]
+    }
   },
   "include": [
     "lib/**/*.ts",
     "extensions/**/*.ts",
     "src/**/*.ts",
-    "examples/**/*.ts"
+    "examples/**/*.ts",
+    "**/__tests__/**/*.mock.ts"
   ],
   "exclude": [
     "**/scripts/*.ts",
+    "**/*.test.ts",
+    "**/__tests__/**/*.ts",
+    "**/__mocks__/**/*.ts"
   ]
 }

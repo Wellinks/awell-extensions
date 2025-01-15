@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { createTask } from '../createTask'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 const samplePayload = generateTestPayload({
   fields: {
@@ -46,7 +49,7 @@ describe('createTask action', () => {
   })
 
   test('Should create a task', async () => {
-    await createTask.onActivityCreated(samplePayload, onComplete, onError)
+    await createTask.onActivityCreated!(samplePayload, onComplete, onError)
 
     expect(mockGetSdkReturn.createTask).toHaveBeenCalled()
     expect(onComplete).toHaveBeenCalledWith({
@@ -61,7 +64,7 @@ describe('createTask action', () => {
       test.each([false, undefined])(
         'Should call onComplete when isReminderEnabled is %p and rest is undefined',
         async (value) => {
-          await createTask.onActivityCreated(
+          await createTask.onActivityCreated!(
             {
               ...samplePayload,
               fields: {
@@ -79,7 +82,7 @@ describe('createTask action', () => {
       )
 
       test('Should call onError when isReminderEnabled is undefined and any of the rest fields is not undefined', async () => {
-        const failedPromise = createTask.onActivityCreated(
+        const failedPromise = createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -104,7 +107,7 @@ describe('createTask action', () => {
           reminderTime: '1',
         },
       ])('Should call onComplete when %p', async (value) => {
-        await createTask.onActivityCreated(
+        await createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -141,7 +144,7 @@ describe('createTask action', () => {
             reminderTime: 1,
           },
         }
-        const failedPromise = createTask.onActivityCreated(
+        const failedPromise = createTask.onActivityCreated!(
           payload,
           onComplete,
           onError
@@ -165,7 +168,7 @@ describe('createTask action', () => {
           reminderIntervalValue: 'Friday, Saturday',
         },
       ])('Should call onComplete when %p', async (value) => {
-        await createTask.onActivityCreated(
+        await createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -193,7 +196,7 @@ describe('createTask action', () => {
       })
 
       test('Should call onError when reminderIntervalValue is not known day of week', async () => {
-        const failedPromise = createTask.onActivityCreated(
+        const failedPromise = createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -214,7 +217,7 @@ describe('createTask action', () => {
 
     describe('Reminder = once (legacy - reminderIntervalValue)', () => {
       test('Should call onComplete when reminderIntervalValue is correct date', async () => {
-        await createTask.onActivityCreated(
+        await createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -242,7 +245,7 @@ describe('createTask action', () => {
       })
 
       test('Should call onError when reminderIntervalValue is incorrect date', async () => {
-        const failedPromise = createTask.onActivityCreated(
+        const failedPromise = createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -263,7 +266,7 @@ describe('createTask action', () => {
 
     describe('Reminder = once (reminderIntervalValueOnce)', () => {
       test('Should call onComplete when reminderIntervalValueOnce is correct date', async () => {
-        await createTask.onActivityCreated(
+        await createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -291,7 +294,7 @@ describe('createTask action', () => {
       })
 
       test('Should call onError when reminderIntervalValueOnce is incorrect date', async () => {
-        const failedPromise = createTask.onActivityCreated(
+        const failedPromise = createTask.onActivityCreated!(
           {
             ...samplePayload,
             fields: {

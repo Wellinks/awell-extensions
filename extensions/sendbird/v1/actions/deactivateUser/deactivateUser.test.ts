@@ -3,7 +3,7 @@ import {
   SendbirdClientMockImplementation,
 } from '../../client/__mocks__'
 import { deactivateUser } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -36,7 +36,7 @@ describe('Deactivate user', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await deactivateUser.onActivityCreated(basePayload, onComplete, onError)
+    await deactivateUser.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(
       SendbirdClientMockImplementation.chatApi.updateUser

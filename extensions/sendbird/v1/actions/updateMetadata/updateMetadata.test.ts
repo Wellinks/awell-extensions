@@ -3,7 +3,7 @@ import {
   SendbirdClientMockImplementation,
 } from '../../client/__mocks__'
 import { updateMetadata } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -36,7 +36,7 @@ describe('Update metadata', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await updateMetadata.onActivityCreated(basePayload, onComplete, onError)
+    await updateMetadata.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(
       SendbirdClientMockImplementation.chatApi.updateMetadata

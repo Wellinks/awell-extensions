@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import {
   mockedCreateQuestionnaireResponsesData,
   mockedCreateQuestionnaireResponsesResource,
@@ -21,7 +21,7 @@ describe('createQuestionnaireResponses', () => {
   }
 
   it('should create questionnaire responses', async () => {
-    await createQuestionnaireResponses.onActivityCreated(
+    await createQuestionnaireResponses.onActivityCreated!(
       generateTestPayload(payload),
       onComplete,
       onError

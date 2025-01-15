@@ -4,7 +4,7 @@ import {
   InfobipClientMockImplementation,
 } from '../../client/__mocks__'
 import { sendSms } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -31,7 +31,7 @@ describe('Send SMS', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendSms.onActivityCreated(basePayload, onComplete, onError)
+    await sendSms.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(InfobipClientMockImplementation.smsApi.send).toHaveBeenCalledWith(
       mockedMessageData

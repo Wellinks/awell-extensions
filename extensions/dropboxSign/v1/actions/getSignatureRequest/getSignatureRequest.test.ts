@@ -1,19 +1,14 @@
 import DropboxSignSdk from '../../../common/sdk/dropboxSignSdk'
 
 import { getSignatureRequest } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../../common/sdk/dropboxSignSdk')
 
 const mockFn = jest
   .spyOn(DropboxSignSdk.SignatureRequestApi.prototype, 'signatureRequestGet')
-  .mockImplementation(async (signatureRequestId, options) => {
-    console.log(
-      'mocked DropboxSignSdk.SignatureRequestApi.signatureRequestGet',
-      { signatureRequestId, options }
-    )
-
-    return {
+  .mockImplementation(
+    jest.fn().mockResolvedValue({
       body: {
         signatureRequest: {
           title: 'test-title',
@@ -26,8 +21,8 @@ const mockFn = jest
         headers: {},
         config: {},
       },
-    }
-  })
+    })
+  )
 
 describe('Get signature request action', () => {
   const onComplete = jest.fn()
@@ -39,7 +34,7 @@ describe('Get signature request action', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await getSignatureRequest.onActivityCreated(
+    await getSignatureRequest.onActivityCreated!(
       generateTestPayload({
         fields: {
           signatureRequestId: '123',

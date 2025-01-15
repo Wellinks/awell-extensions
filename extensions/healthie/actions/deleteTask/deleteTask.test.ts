@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { deleteTask } from '../deleteTask'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('deleteTask action', () => {
   const onComplete = jest.fn()
@@ -18,7 +21,7 @@ describe('deleteTask action', () => {
   })
 
   test('Should delete a task', async () => {
-    await deleteTask.onActivityCreated(
+    await deleteTask.onActivityCreated!(
       generateTestPayload({
         fields: {
           id: 'task-1',

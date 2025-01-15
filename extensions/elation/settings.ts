@@ -1,4 +1,5 @@
 import { type Setting } from '@awell-health/extensions-core'
+import { z, type ZodTypeAny } from 'zod'
 
 export const settings = {
   base_url: {
@@ -33,14 +34,38 @@ export const settings = {
     key: 'username',
     label: 'Username',
     obfuscated: false,
-    description: 'The API username for OAuth2 password authentication.',
-    required: true,
+    description:
+      '⚠️ Deprecated: Elation now uses client credentials authentication. This setting is no longer required and should be removed from your settings.',
+    required: false,
   },
   password: {
     key: 'password',
     label: 'Password',
     obfuscated: true,
-    description: 'The API password for OAuth2 password authentication.',
-    required: true,
+    description:
+      '⚠️ Deprecated: Elation now uses client credentials authentication. This setting is no longer required and should be removed from your settings.',
+    required: false,
+  },
+  openAiApiKey: {
+    key: 'openAiApiKey',
+    label: 'OpenAI API key ',
+    obfuscated: true,
+    required: false,
+    description: 'Required for some actions only.',
   },
 } satisfies Record<string, Setting>
+
+export const SettingsValidationSchema = z.object({
+  base_url: z.string().min(1),
+  auth_url: z.string().min(1),
+  client_id: z.string().min(1),
+  client_secret: z.string().min(1),
+  openAiApiKey: z.string().optional(),
+  /**
+   * Elation now uses client credentials authentication.
+   * We don't remove the settings just yet for backward compatibility for existing care flows.
+   * See https://linear.app/awell/issue/ET-577/elation-extension-make-username-and-password-optional-in-auth
+   */
+  username: z.string().optional(),
+  password: z.string().optional(),
+} satisfies Record<keyof typeof settings, ZodTypeAny>)

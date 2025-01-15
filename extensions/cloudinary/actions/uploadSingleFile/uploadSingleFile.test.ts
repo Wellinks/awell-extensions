@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import { uploadSingleFile } from './uploadSingleFile'
 
 describe('Cloudinary - Upload single file', () => {
@@ -11,7 +11,7 @@ describe('Cloudinary - Upload single file', () => {
   })
 
   test('Should not call the onComplete callback', async () => {
-    await uploadSingleFile.onActivityCreated(
+    await uploadSingleFile.onActivityCreated!(
       generateTestPayload({
         fields: {
           uploadPreset: undefined, // If not defined, it will use preset from the extension settings

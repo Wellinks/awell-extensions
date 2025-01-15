@@ -1,10 +1,10 @@
 import { log } from '../'
-import { generateTestPayload } from '../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('HelloWorld - log', () => {
   test('Should call onComplete', async () => {
     const onComplete = jest.fn()
-    await log.onActivityCreated(
+    await log.onActivityCreated!(
       generateTestPayload({
         fields: {
           hello: 'Some text',
@@ -20,7 +20,7 @@ describe('HelloWorld - log', () => {
   })
   test('Should call onComplete if fields are undefined', async () => {
     const onComplete = jest.fn()
-    await log.onActivityCreated(
+    await log.onActivityCreated!(
       generateTestPayload({
         fields: {
           hello: undefined,
@@ -36,7 +36,7 @@ describe('HelloWorld - log', () => {
   })
   test('Should call onComplete if settings are undefined', async () => {
     const onComplete = jest.fn()
-    await log.onActivityCreated(
+    await log.onActivityCreated!(
       generateTestPayload({
         fields: {
           hello: 'Some text',

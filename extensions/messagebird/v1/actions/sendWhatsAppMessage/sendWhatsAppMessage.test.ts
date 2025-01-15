@@ -1,5 +1,5 @@
 import { sendWhatsAppMessage } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../../common/sdk/messagebirdSdk')
 
@@ -13,7 +13,7 @@ describe('Send WhatsApp message', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendWhatsAppMessage.onActivityCreated(
+    await sendWhatsAppMessage.onActivityCreated!(
       generateTestPayload({
         fields: {
           from: 'WHATSAPP-CHANNEL-ID',

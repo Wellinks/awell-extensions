@@ -1,5 +1,5 @@
 import { bookAppointment } from './bookAppointment'
-import { generateTestPayload } from '../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('Simple book appointment action', () => {
   const onComplete = jest.fn()
@@ -9,7 +9,7 @@ describe('Simple book appointment action', () => {
   })
 
   test('Should not call the onComplete callback', async () => {
-    await bookAppointment.onActivityCreated(
+    await bookAppointment.onActivityCreated!(
       generateTestPayload({
         fields: {
           calLink: 'awell/1h',

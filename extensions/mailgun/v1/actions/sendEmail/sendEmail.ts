@@ -7,6 +7,7 @@ import { getApiUrl } from '../../../common/utils'
 import { validateActionFields } from './config/fields'
 import { fromZodError } from 'zod-validation-error'
 import { ZodError } from 'zod'
+import { addActivityEventLog } from '../../../../../src/lib/awell/addEventLog'
 
 export const sendEmail: Action<typeof fields, typeof settings> = {
   key: 'sendEmail',
@@ -27,19 +28,26 @@ export const sendEmail: Action<typeof fields, typeof settings> = {
         url: getApiUrl({ region }),
       })
 
-      await mg.messages.create(domain, {
+      const res = await mg.messages.create(domain, {
         from: `${fromName} <${fromEmail}>`,
-        to: [to],
+        to,
         subject,
         html: body,
         'o:testmode': testMode,
       })
 
-      await onComplete()
+      await onComplete({
+        events: [
+          addActivityEventLog({
+            message: `Mailgun accepted the request, message ID: ${String(
+              res?.id
+            )}`,
+          }),
+        ],
+      })
     } catch (err) {
       if (err instanceof ZodError) {
         const error = fromZodError(err)
-        console.log(error.message)
         await onError({
           events: [
             {

@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import { embeddedSigning } from './embeddedSigning'
 
 describe('Complete flow action', () => {
@@ -9,7 +9,7 @@ describe('Complete flow action', () => {
   })
 
   test('Should not call the onComplete callback', async () => {
-    await embeddedSigning.onActivityCreated(
+    await embeddedSigning.onActivityCreated!(
       generateTestPayload({
         fields: {
           signUrl: 'https://developers.awellhealth.com',

@@ -7,12 +7,28 @@ import {
   type StartPathwayPayload,
   type UpdatePatientInput,
   type UpdatePatientPayload,
+  type UpdateBaselineInfoInput,
   type QuerySearchPatientsByPatientCodeArgs,
   type SearchPatientsPayload,
   type UserProfile,
   type User,
   type PatientPathwaysPayload,
   type PatientPathway,
+  type PatientPayload,
+  type AddIdentifierToPatientInput,
+  type Maybe,
+  type QueryPathwayActivitiesArgs,
+  type Activity,
+  type ActivitiesPayload,
+  type QueryFormArgs,
+  type Form,
+  type FormPayload,
+  type QueryFormResponseArgs,
+  type FormResponse,
+  type FormResponsePayload,
+  type QueryCalculationResultsArgs,
+  type CalculationResultsPayload,
+  type SingleCalculationResult,
 } from '../gql/graphql'
 import { isNil } from 'lodash'
 import {
@@ -22,6 +38,13 @@ import {
   stopPathwayMutation,
   updatePatientMutation,
   searchPatientByPatientCodeQuery,
+  updateBaselineInfoMutation,
+  getPatientByIdentifierQuery,
+  addIdentifierToPatientMutation,
+  GetPathwayActivitiesQuery,
+  GetFormQuery,
+  GetFormResponseQuery,
+  GetCalculationResultsQuery,
 } from './graphql'
 
 export default class AwellSdk {
@@ -136,5 +159,101 @@ export default class AwellSdk {
     }
 
     throw new Error('Stop pathway failed.')
+  }
+
+  async updateBaselineInfo(input: UpdateBaselineInfoInput): Promise<boolean> {
+    const data = await this.client.request<{
+      updateBaselineInfo: { code: string; success: boolean }
+    }>(updateBaselineInfoMutation, { input })
+
+    if (data.updateBaselineInfo.success) {
+      return true
+    }
+    let msg: string = ''
+    if (data.updateBaselineInfo.code === '200') {
+      msg = JSON.stringify((data as unknown as { errors: any }).errors)
+    }
+    throw new Error(`Update baseline info failed. ${msg}`)
+  }
+
+  async getPatientByIdentifier(input: {
+    system: string
+    value: string
+  }): Promise<Maybe<User> | undefined> {
+    const data = await this.client.request<{
+      patientByIdentifier: PatientPayload
+    }>(getPatientByIdentifierQuery, input)
+
+    return data.patientByIdentifier.patient
+  }
+
+  async addIdentifierToPatient(
+    input: AddIdentifierToPatientInput
+  ): Promise<boolean> {
+    const data = await this.client.request<{
+      addIdentifierToPatient: { code: string; success: boolean }
+    }>(addIdentifierToPatientMutation, { input })
+
+    if (data.addIdentifierToPatient.success) {
+      return true
+    }
+
+    throw new Error('Failed to add identifier to patient.')
+  }
+
+  async getPathwayActivities(
+    input: QueryPathwayActivitiesArgs
+  ): Promise<Activity[]> {
+    const data = await this.client.request<{
+      pathwayActivities: ActivitiesPayload
+    }>(GetPathwayActivitiesQuery, input)
+
+    if (data.pathwayActivities.success) {
+      return data.pathwayActivities.activities
+    }
+
+    throw new Error('Retrieving pathway activities failed')
+  }
+
+  async getForm(input: QueryFormArgs): Promise<Form> {
+    const data = await this.client.request<{
+      form: FormPayload
+    }>(GetFormQuery, input)
+
+    if (data.form.form != null) {
+      return data.form.form
+    }
+
+    throw new Error(`Retrieving form ${input.id} failed`)
+  }
+
+  async getFormResponse(input: QueryFormResponseArgs): Promise<FormResponse> {
+    const data = await this.client.request<{
+      formResponse: FormResponsePayload
+    }>(GetFormResponseQuery, input)
+
+    if (data.formResponse.success) {
+      return data.formResponse.response
+    }
+
+    throw new Error(
+      `Retrieving form response for activity ${input.activity_id} failed`
+    )
+  }
+
+  async getCalculationResults(
+    input: QueryCalculationResultsArgs
+  ): Promise<SingleCalculationResult[]> {
+    const data = await this.client.request<{
+      calculationResults: CalculationResultsPayload
+    }>(GetCalculationResultsQuery, input)
+
+    if (data.calculationResults.success) {
+      return data.calculationResults.result
+    }
+
+    throw new Error(
+      `Retrieving calculation results for activity ${input.activity_id} failed`
+    )
   }
 }

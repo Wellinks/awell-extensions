@@ -3,7 +3,7 @@ import {
   SendgridClientMockImplementation,
 } from '../../../__mocks__/client'
 import { sendEmail } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../../client', () => ({ SendgridClient }))
 
@@ -31,7 +31,7 @@ describe('Send email', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendEmail.onActivityCreated(basePayload, onComplete, onError)
+    await sendEmail.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(SendgridClientMockImplementation.mail.send).toHaveBeenCalledWith({
       from: {
@@ -52,7 +52,7 @@ describe('Send email', () => {
   })
 
   test('Should use settings values when fields are not provided', async () => {
-    await sendEmail.onActivityCreated(
+    await sendEmail.onActivityCreated!(
       {
         ...basePayload,
         fields: {
@@ -87,7 +87,7 @@ describe('Send email', () => {
   ])(
     '$#. Should use fields values when provided and override settings values',
     async ({ settings }) => {
-      await sendEmail.onActivityCreated(
+      await sendEmail.onActivityCreated!(
         {
           ...basePayload,
           fields: {
@@ -117,7 +117,7 @@ describe('Send email', () => {
   )
 
   test('Should throw error when fields and settings are not provided', async () => {
-    await sendEmail.onActivityCreated(
+    await sendEmail.onActivityCreated!(
       {
         ...basePayload,
         fields: {

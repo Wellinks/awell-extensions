@@ -1,11 +1,18 @@
 import { isNil } from 'lodash'
 import { type Action } from '@awell-health/extensions-core'
 import { Category } from '@awell-health/extensions-core'
-import { getSdk } from '../../gql/sdk'
-import { initialiseClient } from '../../graphqlClient'
+import { validatePayloadAndCreateSdk } from '../../lib/sdk/validatePayloadAndCreateSdk'
 import { type settings } from '../../settings'
-import { HealthieError, mapHealthieToActivityError } from '../../errors'
-import { fields } from './config'
+import {
+  HealthieError,
+  mapHealthieToActivityError,
+} from '../../lib/sdk/graphql-codegen/errors'
+import {
+  fields,
+  FieldsValidationSchema,
+  type UpdatePatientPayload,
+} from './config'
+import { ZodError } from 'zod'
 
 export const updatePatient: Action<typeof fields, typeof settings> = {
   key: 'updatePatient',
@@ -14,86 +21,61 @@ export const updatePatient: Action<typeof fields, typeof settings> = {
   description: 'Update a patient in Healthie.',
   fields,
   previewable: true,
-  onActivityCreated: async (payload, onComplete, onError): Promise<void> => {
-    const { fields, settings } = payload
-    const {
-      id,
-      first_name,
-      last_name,
-      legal_name,
-      email,
-      phone_number,
-      provider_id,
-      gender,
-      gender_identity,
-      height,
-      sex,
-      user_group_id,
-      active,
-      dob,
-      skipped_email,
-    } = fields
+  onEvent: async ({ payload, onComplete, onError }) => {
     try {
-      if (isNil(id)) {
-        await onError({
-          events: [
-            {
-              date: new Date().toISOString(),
-              text: { en: 'Fields are missing' },
-              error: {
-                category: 'MISSING_FIELDS',
-                message: '`id` is missing',
-              },
-            },
-          ],
-        })
-        return
+      const { fields, healthieSdk } = await validatePayloadAndCreateSdk({
+        fieldsSchema: FieldsValidationSchema,
+        payload,
+      })
+      const dietitian_id =
+        fields.provider_id === '' || isNil(fields.provider_id)
+          ? undefined
+          : fields.provider_id
+
+      const input: UpdatePatientPayload = {
+        id: fields.id,
+        first_name: fields.first_name,
+        last_name: fields.last_name,
+        legal_name: fields.legal_name,
+        email: fields.email,
+        phone_number: fields.phone_number,
+        dietitian_id,
+        gender: fields.gender,
+        gender_identity: fields.gender_identity,
+        height: fields.height,
+        sex: fields.sex,
+        user_group_id: fields.user_group_id,
+        active: fields.active,
+        dob: fields.dob,
       }
 
-      const client = initialiseClient(settings)
-      if (client !== undefined) {
-        const sdk = getSdk(client)
-        await sdk.updatePatient({
-          input: {
-            id,
-            first_name,
-            last_name,
-            legal_name,
-            email,
-            phone_number,
-            dietitian_id: provider_id === '' ? undefined : provider_id,
-            gender,
-            gender_identity,
-            height,
-            sex,
-            user_group_id,
-            active,
-            dob,
-            skipped_email,
+      if (fields.resend_welcome_email === true) {
+        input.resend_welcome = true
+      }
+
+      await healthieSdk.client.mutation({
+        updateClient: {
+          __args: {
+            input,
           },
-        })
+          user: {
+            id: true,
+          },
+          messages: {
+            __scalar: true,
+          },
+        },
+      })
 
-        await onComplete()
-      } else {
-        await onError({
-          events: [
-            {
-              date: new Date().toISOString(),
-              text: { en: 'API client requires an API url and API key' },
-              error: {
-                category: 'MISSING_SETTINGS',
-                message: 'Missing api url or api key',
-              },
-            },
-          ],
-        })
-      }
+      await onComplete()
     } catch (err) {
       if (err instanceof HealthieError) {
         const errors = mapHealthieToActivityError(err.errors)
         await onError({
           events: errors,
         })
+      } else if (err instanceof ZodError) {
+        throw err
       } else {
         const error = err as Error
         await onError({

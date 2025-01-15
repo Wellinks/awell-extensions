@@ -1,10 +1,10 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import { mockGetSdk } from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { updatePatientQuickNote } from '../updatePatientQuickNote'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('createMetricEntry action', () => {
   const onComplete = jest.fn()
@@ -19,7 +19,7 @@ describe('createMetricEntry action', () => {
   })
 
   test('Should update patient quick note', async () => {
-    await updatePatientQuickNote.onActivityCreated(
+    await updatePatientQuickNote.onActivityCreated!(
       generateTestPayload({
         fields: {
           patientId: 'patient-id',

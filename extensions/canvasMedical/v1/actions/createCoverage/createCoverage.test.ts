@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import {
   mockedCreateCoverageData,
   mockedCoverageId,
@@ -21,7 +21,7 @@ describe('createCoverage', () => {
   }
 
   it('should create coverage', async () => {
-    await createCoverage.onActivityCreated(
+    await createCoverage.onActivityCreated!(
       generateTestPayload(payload),
       onComplete,
       onError

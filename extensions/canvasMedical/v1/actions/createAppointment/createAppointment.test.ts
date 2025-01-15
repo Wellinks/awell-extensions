@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import {
   mockedAppointmentData,
   mockedAppointmentId,
@@ -23,7 +23,7 @@ describe('createAppointment', () => {
   }
 
   it('should create appointment', async () => {
-    await createAppointment.onActivityCreated(
+    await createAppointment.onActivityCreated!(
       generateTestPayload(payload),
       onComplete,
       onError

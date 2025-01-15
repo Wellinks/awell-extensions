@@ -1,5 +1,5 @@
 import { sendQuestionnaire } from '.'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('Send questionnaire', () => {
   const onComplete = jest.fn()
@@ -17,7 +17,7 @@ describe('Send questionnaire', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendQuestionnaire.onActivityCreated(basePayload, onComplete, onError)
+    await sendQuestionnaire.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(onComplete).toHaveBeenCalled()
     expect(onError).not.toHaveBeenCalled()

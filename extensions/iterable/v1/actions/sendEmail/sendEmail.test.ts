@@ -3,7 +3,7 @@ import {
   IterableClientMockImplementation,
 } from '../../client/__mocks__'
 import { sendEmail } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -30,7 +30,7 @@ describe('Iterable - Send email', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendEmail.onActivityCreated(basePayload, onComplete, onError)
+    await sendEmail.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(
       IterableClientMockImplementation.emailApi.sendEmail

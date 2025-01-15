@@ -1,10 +1,10 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import { mockGetSdk } from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { checkPatientTag } from '../checkPatientTag'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('checkPatientTag action', () => {
   const onComplete = jest.fn()
@@ -20,7 +20,7 @@ describe('checkPatientTag action', () => {
 
   describe('when tag is applied', () => {
     it('should return call onComplete with hasTag data points set to true', async () => {
-      await checkPatientTag.onActivityCreated(
+      await checkPatientTag.onActivityCreated!(
         generateTestPayload({
           fields: {
             id: 'tag-1',
@@ -44,7 +44,7 @@ describe('checkPatientTag action', () => {
   })
   describe('when tag is not applied', () => {
     it('should return call onComplete with hasTag data points set to false', async () => {
-      await checkPatientTag.onActivityCreated(
+      await checkPatientTag.onActivityCreated!(
         generateTestPayload({
           fields: {
             id: 'no-tag',

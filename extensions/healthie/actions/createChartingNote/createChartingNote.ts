@@ -1,11 +1,15 @@
 import { isNil } from 'lodash'
 import { type Action } from '@awell-health/extensions-core'
 import { Category } from '@awell-health/extensions-core'
-import { getSdk } from '../../gql/sdk'
-import { initialiseClient } from '../../graphqlClient'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import { initialiseClient } from '../../lib/sdk/graphql-codegen/graphqlClient'
 import { type settings } from '../../settings'
-import { HealthieError, mapHealthieToActivityError } from '../../errors'
+import {
+  HealthieError,
+  mapHealthieToActivityError,
+} from '../../lib/sdk/graphql-codegen/errors'
 import { fields } from './config'
+import { addActivityEventLog } from '../../../../src/lib/awell/addEventLog'
 
 export const createChartingNote: Action<typeof fields, typeof settings> = {
   key: 'createChartingNote',
@@ -16,7 +20,14 @@ export const createChartingNote: Action<typeof fields, typeof settings> = {
   previewable: true,
   onActivityCreated: async (payload, onComplete, onError): Promise<void> => {
     const { fields, settings } = payload
-    const { healthie_patient_id, form_id, note_content, marked_locked, appointment_id } = fields
+    const {
+      healthie_patient_id,
+      form_id,
+      note_content,
+      marked_locked,
+      appointment_id,
+    } = fields
+
     try {
       if (isNil(healthie_patient_id) || isNil(form_id) || isNil(note_content)) {
         await onError({
@@ -47,6 +58,9 @@ export const createChartingNote: Action<typeof fields, typeof settings> = {
         if (isNil(moduleForm)) {
           await onError({
             events: [
+              addActivityEventLog({
+                message: `Note content: ${note_content}`,
+              }),
               {
                 date: new Date().toISOString(),
                 text: { en: "Form doesn't exist" },
@@ -115,7 +129,13 @@ export const createChartingNote: Action<typeof fields, typeof settings> = {
           },
         })
 
-        await onComplete()
+        await onComplete({
+          events: [
+            addActivityEventLog({
+              message: `Note content: ${note_content}`,
+            }),
+          ],
+        })
       } else {
         await onError({
           events: [

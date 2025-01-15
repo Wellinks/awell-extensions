@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { sendFormCompletionRequest } from '../sendFormCompletionRequest'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 const sampleFormCompletion = {
   form: 'form-template-1',
@@ -52,7 +55,7 @@ describe('sendFormCompletionRequest action', () => {
   })
 
   test('Should send form completion request', async () => {
-    await sendFormCompletionRequest.onActivityCreated(
+    await sendFormCompletionRequest.onActivityCreated!(
       samplePayload,
       onComplete,
       onError
@@ -69,7 +72,7 @@ describe('sendFormCompletionRequest action', () => {
   ])(
     '$#. Should set "recurrence_ends" to "true" and "ends_on" to $endsOnExpected when provided with $endsOnInput"',
     async ({ endsOnInput, endsOnExpected }) => {
-      await sendFormCompletionRequest.onActivityCreated(
+      await sendFormCompletionRequest.onActivityCreated!(
         {
           ...samplePayload,
           fields: {
@@ -108,7 +111,7 @@ describe('sendFormCompletionRequest action', () => {
       test.each([false, undefined])(
         'Should call onComplete when is_recurring is %p and rest is undefined',
         async (value) => {
-          await sendFormCompletionRequest.onActivityCreated(
+          await sendFormCompletionRequest.onActivityCreated!(
             {
               ...samplePayload,
               fields: {
@@ -146,7 +149,7 @@ describe('sendFormCompletionRequest action', () => {
           period: 'PM',
         },
       ])('Should call onComplete when %p', async (value) => {
-        await sendFormCompletionRequest.onActivityCreated(
+        await sendFormCompletionRequest.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -191,7 +194,7 @@ describe('sendFormCompletionRequest action', () => {
           weekdayActual: 'Wednesday',
         },
       ])('Should call onComplete when %p', async (value) => {
-        await sendFormCompletionRequest.onActivityCreated(
+        await sendFormCompletionRequest.onActivityCreated!(
           {
             ...samplePayload,
             fields: {
@@ -221,7 +224,7 @@ describe('sendFormCompletionRequest action', () => {
 
     describe('Frequency = monthly', () => {
       test('Should call onComplete when "monthday" is not empty', async () => {
-        await sendFormCompletionRequest.onActivityCreated(
+        await sendFormCompletionRequest.onActivityCreated!(
           {
             ...samplePayload,
             fields: {

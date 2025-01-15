@@ -1,5 +1,5 @@
 import { parseNumberToTextWithDictionary } from '.'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('Transform - Parse number to text with dictionary', () => {
   const onComplete = jest.fn()
@@ -20,7 +20,7 @@ describe('Transform - Parse number to text with dictionary', () => {
       settings: {},
     })
 
-    await parseNumberToTextWithDictionary.onActivityCreated(
+    await parseNumberToTextWithDictionary.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError
@@ -44,7 +44,7 @@ describe('Transform - Parse number to text with dictionary', () => {
       settings: {},
     })
 
-    await parseNumberToTextWithDictionary.onActivityCreated(
+    await parseNumberToTextWithDictionary.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError
@@ -68,7 +68,7 @@ describe('Transform - Parse number to text with dictionary', () => {
       settings: {},
     })
 
-    await parseNumberToTextWithDictionary.onActivityCreated(
+    await parseNumberToTextWithDictionary.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError
@@ -90,7 +90,7 @@ describe('Transform - Parse number to text with dictionary', () => {
       settings: {},
     })
 
-    await parseNumberToTextWithDictionary.onActivityCreated(
+    await parseNumberToTextWithDictionary.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError
@@ -112,7 +112,7 @@ describe('Transform - Parse number to text with dictionary', () => {
       settings: {},
     })
 
-    await parseNumberToTextWithDictionary.onActivityCreated(
+    await parseNumberToTextWithDictionary.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError

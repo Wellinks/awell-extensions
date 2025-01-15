@@ -1,9 +1,12 @@
 import { isNil } from 'lodash'
-import { HealthieError, mapHealthieToActivityError } from '../../errors'
+import {
+  HealthieError,
+  mapHealthieToActivityError,
+} from '../../lib/sdk/graphql-codegen/errors'
 import { type Action } from '@awell-health/extensions-core'
 import { Category } from '@awell-health/extensions-core'
-import { getSdk } from '../../gql/sdk'
-import { initialiseClient } from '../../graphqlClient'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import { initialiseClient } from '../../lib/sdk/graphql-codegen/graphqlClient'
 import { type settings } from '../../settings'
 import { fields } from './config'
 

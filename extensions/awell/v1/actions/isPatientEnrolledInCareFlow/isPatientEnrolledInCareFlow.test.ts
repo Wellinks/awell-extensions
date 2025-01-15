@@ -1,7 +1,10 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { TestHelpers } from '@awell-health/extensions-core'
+import { generateTestPayload } from '@/tests'
 import { PathwayStatus } from '../../gql/graphql'
 import AwellSdk from '../../sdk/awellSdk'
-import { isPatientEnrolledInCareFlow } from './isPatientEnrolledInCareFlow'
+import { isPatientEnrolledInCareFlow as actionInterface } from './isPatientEnrolledInCareFlow'
+import { FieldsValidationSchema } from './config'
+import { ZodError } from 'zod'
 
 jest.mock('../../sdk/awellSdk')
 
@@ -11,12 +14,90 @@ const mockGetPatientCareFlowsFn = jest.spyOn(
 )
 
 describe('Is patient already enrolled in care flow action', () => {
-  const onComplete = jest.fn()
-  const onError = jest.fn()
+  const {
+    onComplete,
+    onError,
+    helpers,
+    extensionAction: isPatientEnrolledInCareFlow,
+    clearMocks,
+  } = TestHelpers.fromAction(actionInterface)
 
   beforeEach(() => {
-    onComplete.mockClear()
-    onError.mockClear()
+    clearMocks()
+  })
+
+  describe('Field validation', () => {
+    describe('Pathway status', () => {
+      test('Single pathway status', () => {
+        expect(() => {
+          const res = FieldsValidationSchema.safeParse({
+            pathwayStatus: 'active',
+          })
+
+          if (!res.success) {
+            console.log(JSON.stringify(res.error, null, 2))
+            throw new Error()
+          }
+
+          expect(res.data.pathwayStatus).toEqual([PathwayStatus.Active])
+        }).not.toThrow(ZodError)
+      })
+
+      test('Multiple pathway statuses', () => {
+        expect(() => {
+          const res = FieldsValidationSchema.safeParse({
+            pathwayStatus: 'active,completed',
+          })
+
+          if (!res.success) {
+            console.log(JSON.stringify(res.error, null, 2))
+            throw new Error()
+          }
+
+          expect(res.data.pathwayStatus).toEqual([
+            PathwayStatus.Active,
+            PathwayStatus.Completed,
+          ])
+        }).not.toThrow(ZodError)
+      })
+
+      test('Multiple pathway statuses with whitespaces', () => {
+        expect(() => {
+          const res = FieldsValidationSchema.safeParse({
+            pathwayStatus: 'active,      completed        , stopped',
+          })
+
+          if (!res.success) {
+            console.log(JSON.stringify(res.error, null, 2))
+            throw new Error()
+          }
+
+          expect(res.data.pathwayStatus).toEqual([
+            PathwayStatus.Active,
+            PathwayStatus.Completed,
+            PathwayStatus.Stopped,
+          ])
+        }).not.toThrow(ZodError)
+      })
+
+      test('Invalid pathway statuses get ignored', () => {
+        expect(() => {
+          const res = FieldsValidationSchema.safeParse({
+            pathwayStatus: 'active,completed,invalid',
+          })
+
+          if (!res.success) {
+            console.log(JSON.stringify(res.error, null, 2))
+            throw new Error()
+          }
+
+          expect(res.data.pathwayStatus).toEqual([
+            PathwayStatus.Active,
+            PathwayStatus.Completed,
+          ])
+        }).not.toThrow(ZodError)
+      })
+    })
   })
 
   test('Should call the onComplete callback and return true if patient is already enrolled in the care flow', async () => {
@@ -39,8 +120,8 @@ describe('Is patient already enrolled in care flow action', () => {
       ])
     )
 
-    await isPatientEnrolledInCareFlow.onActivityCreated(
-      generateTestPayload({
+    await isPatientEnrolledInCareFlow.onEvent({
+      payload: generateTestPayload({
         pathway: {
           id: 'pathway-instance-id-1',
           definition_id: 'pathway-definition-1',
@@ -49,14 +130,12 @@ describe('Is patient already enrolled in care flow action', () => {
           pathwayStatus: '', // By default, only active care flows
           careFlowDefinitionIds: undefined, // By default, only care flows with same definition id as current care flow
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
+      onError,
+      helpers,
+    })
 
     // expect(mockFn).toHaveBeenCalled()
     expect(onComplete).toHaveBeenCalledWith({
@@ -65,6 +144,7 @@ describe('Is patient already enrolled in care flow action', () => {
         nbrOfResults: '1',
         careFlowIds: 'pathway-instance-id-2',
       },
+      events: expect.any(Array),
     })
     expect(onError).not.toHaveBeenCalled()
   })
@@ -82,8 +162,8 @@ describe('Is patient already enrolled in care flow action', () => {
       ])
     )
 
-    await isPatientEnrolledInCareFlow.onActivityCreated(
-      generateTestPayload({
+    await isPatientEnrolledInCareFlow.onEvent({
+      payload: generateTestPayload({
         pathway: {
           id: 'pathway-instance-id-1',
           definition_id: 'pathway-definition-1',
@@ -92,14 +172,12 @@ describe('Is patient already enrolled in care flow action', () => {
           pathwayStatus: undefined, // By default, only active care flows
           careFlowDefinitionIds: undefined, // By default, only care flows with same definition id as current care flow
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
+      onError,
+      helpers,
+    })
 
     expect(onComplete).toHaveBeenCalledWith({
       data_points: {
@@ -107,6 +185,7 @@ describe('Is patient already enrolled in care flow action', () => {
         nbrOfResults: '0',
         careFlowIds: '',
       },
+      events: expect.any(Array),
     })
     expect(onError).not.toHaveBeenCalled()
   })
@@ -131,8 +210,8 @@ describe('Is patient already enrolled in care flow action', () => {
       ])
     )
 
-    await isPatientEnrolledInCareFlow.onActivityCreated(
-      generateTestPayload({
+    await isPatientEnrolledInCareFlow.onEvent({
+      payload: generateTestPayload({
         pathway: {
           id: 'pathway-instance-id-1',
           definition_id: 'pathway-definition-1',
@@ -141,14 +220,12 @@ describe('Is patient already enrolled in care flow action', () => {
           pathwayStatus: `${PathwayStatus.Completed}`,
           careFlowDefinitionIds: undefined,
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
+      onError,
+      helpers,
+    })
 
     expect(onComplete).toHaveBeenCalledWith({
       data_points: {
@@ -156,6 +233,7 @@ describe('Is patient already enrolled in care flow action', () => {
         nbrOfResults: '1',
         careFlowIds: 'pathway-instance-id-2',
       },
+      events: expect.any(Array),
     })
     expect(onError).not.toHaveBeenCalled()
   })
@@ -180,8 +258,8 @@ describe('Is patient already enrolled in care flow action', () => {
       ])
     )
 
-    await isPatientEnrolledInCareFlow.onActivityCreated(
-      generateTestPayload({
+    await isPatientEnrolledInCareFlow.onEvent({
+      payload: generateTestPayload({
         pathway: {
           id: 'pathway-instance-id-1',
           definition_id: 'pathway-definition-1',
@@ -190,14 +268,12 @@ describe('Is patient already enrolled in care flow action', () => {
           pathwayStatus: '',
           careFlowDefinitionIds: 'pathway-definition-2', // Note that this is different than the care flow the patient is currently enrolled in
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
+      onError,
+      helpers,
+    })
 
     expect(onComplete).toHaveBeenCalledWith({
       data_points: {
@@ -205,6 +281,7 @@ describe('Is patient already enrolled in care flow action', () => {
         nbrOfResults: '1',
         careFlowIds: 'pathway-instance-id-2',
       },
+      events: expect.any(Array),
     })
     expect(onError).not.toHaveBeenCalled()
   })
@@ -236,8 +313,8 @@ describe('Is patient already enrolled in care flow action', () => {
       ])
     )
 
-    await isPatientEnrolledInCareFlow.onActivityCreated(
-      generateTestPayload({
+    await isPatientEnrolledInCareFlow.onEvent({
+      payload: generateTestPayload({
         pathway: {
           id: 'pathway-instance-id-1',
           definition_id: 'pathway-definition-1',
@@ -246,14 +323,12 @@ describe('Is patient already enrolled in care flow action', () => {
           pathwayStatus: `${PathwayStatus.Active}, ${PathwayStatus.Completed}`,
           careFlowDefinitionIds: 'pathway-definition-1',
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
+      onError,
+      helpers,
+    })
 
     expect(onComplete).toHaveBeenCalledWith({
       data_points: {
@@ -261,6 +336,7 @@ describe('Is patient already enrolled in care flow action', () => {
         nbrOfResults: '2',
         careFlowIds: 'pathway-instance-id-2,pathway-instance-id-3',
       },
+      events: expect.any(Array),
     })
     expect(onError).not.toHaveBeenCalled()
   })

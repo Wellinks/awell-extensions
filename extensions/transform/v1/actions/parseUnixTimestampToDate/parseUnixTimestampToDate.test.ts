@@ -1,5 +1,5 @@
 import { parseUnixTimestampToDate } from '.'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('Transform - Parse unix timestamp to date', () => {
   const onComplete = jest.fn()
@@ -17,7 +17,7 @@ describe('Transform - Parse unix timestamp to date', () => {
       settings: {},
     })
 
-    await parseUnixTimestampToDate.onActivityCreated(
+    await parseUnixTimestampToDate.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError

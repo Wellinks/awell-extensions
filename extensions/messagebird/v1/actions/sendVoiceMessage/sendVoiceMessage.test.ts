@@ -1,5 +1,5 @@
 import { sendVoiceMessage } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../../common/sdk/messagebirdSdk')
 
@@ -13,7 +13,7 @@ describe('Send voice message', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendVoiceMessage.onActivityCreated(
+    await sendVoiceMessage.onActivityCreated!(
       generateTestPayload({
         fields: {
           originator: 'MessageBird', // "MessageBird" can be used for test messages

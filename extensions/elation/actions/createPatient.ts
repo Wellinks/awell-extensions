@@ -156,6 +156,13 @@ const fields = {
     description: 'The previous last name of the patient',
     type: FieldType.STRING,
   },
+  tags: {
+    id: 'tags',
+    label: 'Tags',
+    description:
+      'The tags associated with the patient. Separate multiple tags with a comma (max 10 per patient).',
+    type: FieldType.STRING,
+  },
 } satisfies Record<string, Field>
 
 const dataPoints = {
@@ -201,13 +208,19 @@ export const createPatient: Action<
         ethnicity,
         race,
         notes,
+        tags,
       } = payload.fields
 
-      const patientEmail = isNil(email) || isEmpty(email) ? null : [{ email }]
+      const patientEmail =
+        isNil(email) || isEmpty(email) ? undefined : [{ email }]
       const patientMobilePhone =
         isNil(mobilePhone) || isEmpty(mobilePhone)
-          ? null
+          ? undefined
           : [{ phone: mobilePhone, phone_type: 'Mobile' }]
+      const patientTags =
+        isNil(tags) || isEmpty(tags)
+          ? undefined
+          : tags.split(',').map((tag) => tag.trim())
 
       const patient = patientSchema.parse({
         first_name: firstName,
@@ -231,6 +244,7 @@ export const createPatient: Action<
         ethnicity,
         race,
         notes,
+        tags: patientTags,
       })
 
       // API Call should produce AuthError or something dif.
@@ -242,7 +256,6 @@ export const createPatient: Action<
         },
       })
     } catch (err) {
-      console.log(err)
       if (err instanceof ZodError) {
         const error = fromZodError(err)
         await onError({

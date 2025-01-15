@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import { remoteSingleSelect } from './remoteSingleSelect'
 
 describe('Complete flow action', () => {
@@ -9,7 +9,7 @@ describe('Complete flow action', () => {
   })
 
   test('Should not call the onComplete callback', async () => {
-    await remoteSingleSelect.onActivityCreated(
+    await remoteSingleSelect.onActivityCreated!(
       generateTestPayload({
         fields: {
           headers: '{"Content-Type": "application/json"}',

@@ -6,6 +6,10 @@ import {
   parseTextToNumber,
   parseUnixTimestampToDate,
   parseNumberToTextWithDictionary,
+  generateDynamicUrl,
+  parseStringToPhoneNumber,
+  feetAndInchesToInches,
+  serializeJson,
 } from './v1/actions'
 import { settings } from './settings'
 
@@ -21,11 +25,15 @@ export const Transform: Extension = {
     authorType: AuthorType.AWELL,
   },
   actions: {
+    feetAndInchesToInches,
     parseDateToUnixTimestamp,
     parseNumberToText,
     parseTextToNumber,
     parseUnixTimestampToDate,
     parseNumberToTextWithDictionary,
+    generateDynamicUrl,
+    parseStringToPhoneNumber,
+    serializeJson,
   },
   settings,
 }

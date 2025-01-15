@@ -1,10 +1,16 @@
 import { type Action } from '@awell-health/extensions-core'
 import { Category } from '@awell-health/extensions-core'
-import { HealthieError, mapHealthieToActivityError } from '../../errors'
-import { getSdk } from '../../gql/sdk'
-import { initialiseClient } from '../../graphqlClient'
+import {
+  HealthieError,
+  mapHealthieToActivityError,
+} from '../../lib/sdk/graphql-codegen/errors'
+import { validatePayloadAndCreateSdk } from '../../lib/sdk/validatePayloadAndCreateSdk'
 import { type settings } from '../../settings'
-import { dataPoints, fields } from './config'
+import { dataPoints, fields, FieldsValidationSchema } from './config'
+import {
+  HealthieAppointmentNotCreated,
+  parseHealthieAppointmentNotCreatedError,
+} from './lib/errors'
 
 export const createAppointment: Action<
   typeof fields,
@@ -17,66 +23,57 @@ export const createAppointment: Action<
   description: 'Create a 1:1 appointment in Healthie.',
   fields,
   dataPoints,
-  previewable: true,
-  onActivityCreated: async (payload, onComplete, onError): Promise<void> => {
-    const { fields, settings } = payload
-    const {
-      patientId,
-      appointmentTypeId,
-      datetime,
-      contactTypeId,
-      otherPartyId,
-    } = fields
+  previewable: false,
+  onEvent: async ({ payload, onComplete, onError, helpers }) => {
+    const { fields, healthieSdk } = await validatePayloadAndCreateSdk({
+      fieldsSchema: FieldsValidationSchema,
+      payload,
+    })
+
     try {
-      const client = initialiseClient(settings)
-      if (client !== undefined) {
-        const sdk = getSdk(client)
-        const { data } = await sdk.createAppointment({
-          appointment_type_id: appointmentTypeId,
-          contact_type: contactTypeId,
-          other_party_id: otherPartyId,
-          datetime,
-          user_id: patientId,
-        })
-        await onComplete({
-          data_points: {
-            appointmentId: data.createAppointment?.appointment?.id,
-          },
-        })
-      } else {
-        await onError({
-          events: [
-            {
-              date: new Date().toISOString(),
-              text: { en: 'API client requires an API url and API key' },
-              error: {
-                category: 'MISSING_SETTINGS',
-                message: 'Missing api url or api key',
-              },
+      const res = await healthieSdk.client.mutation({
+        createAppointment: {
+          __args: {
+            input: {
+              appointment_type_id: fields.appointmentTypeId,
+              contact_type: fields.contactTypeId,
+              other_party_id: fields.otherPartyId,
+              datetime: fields.datetime,
+              user_id: fields.patientId,
+              metadata: JSON.stringify(fields.metadata),
+              notes: fields.notes,
+              external_videochat_url: fields.externalVideochatUrl,
             },
-          ],
+          },
+          appointment: {
+            id: true,
+          },
+        },
+      })
+
+      const appointmentId = res.createAppointment?.appointment?.id
+
+      if (appointmentId === undefined)
+        throw new HealthieAppointmentNotCreated(res)
+
+      await onComplete({
+        data_points: {
+          appointmentId,
+        },
+      })
+    } catch (error) {
+      if (error instanceof HealthieAppointmentNotCreated) {
+        await onError({
+          events: [parseHealthieAppointmentNotCreatedError(error.errors)],
         })
-      }
-    } catch (err) {
-      if (err instanceof HealthieError) {
-        const errors = mapHealthieToActivityError(err.errors)
+      } else if (error instanceof HealthieError) {
+        const errors = mapHealthieToActivityError(error.errors)
         await onError({
           events: errors,
         })
       } else {
-        const error = err as Error
-        await onError({
-          events: [
-            {
-              date: new Date().toISOString(),
-              text: { en: 'Healthie API reported an error' },
-              error: {
-                category: 'SERVER_ERROR',
-                message: error.message,
-              },
-            },
-          ],
-        })
+        // Handles Zod and other unknown errors
+        throw error
       }
     }
   },

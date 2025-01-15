@@ -4,7 +4,7 @@ import {
   SendbirdClientMockImplementation,
 } from '../../client/__mocks__'
 import { getCustomer } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -36,7 +36,7 @@ describe('Get customer', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await getCustomer.onActivityCreated(basePayload, onComplete, onError)
+    await getCustomer.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(
       SendbirdClientMockImplementation.deskApi.getCustomer

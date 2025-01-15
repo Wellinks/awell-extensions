@@ -1,5 +1,5 @@
 import { sendEmailWithTemplate } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../../common/sdk/mailchimpSdk')
 
@@ -13,7 +13,7 @@ describe('Send email with template', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendEmailWithTemplate.onActivityCreated(
+    await sendEmailWithTemplate.onActivityCreated!(
       generateTestPayload({
         fields: {
           to: 'email@hello.com',
