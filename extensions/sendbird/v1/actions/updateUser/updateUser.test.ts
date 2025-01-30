@@ -3,7 +3,7 @@ import {
   SendbirdClientMockImplementation,
 } from '../../client/__mocks__'
 import { updateUser } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -38,7 +38,7 @@ describe('Update user', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await updateUser.onActivityCreated(basePayload, onComplete, onError)
+    await updateUser.onActivityCreated!(basePayload, onComplete, onError)
     expect(
       SendbirdClientMockImplementation.chatApi.updateUser
     ).toHaveBeenCalledWith({

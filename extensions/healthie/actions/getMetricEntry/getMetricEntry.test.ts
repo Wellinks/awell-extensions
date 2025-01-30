@@ -1,10 +1,10 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import { mockGetSdk } from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { getMetricEntry } from '.'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('Healthie - Get metric entry', () => {
   const onComplete = jest.fn()
@@ -19,7 +19,7 @@ describe('Healthie - Get metric entry', () => {
   })
 
   test('Should get most recent metric entry', async () => {
-    await getMetricEntry.onActivityCreated(
+    await getMetricEntry.onActivityCreated!(
       generateTestPayload({
         fields: {
           patientId: '123',

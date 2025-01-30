@@ -22,8 +22,19 @@ import { updatePatientQuickNote } from './updatePatientQuickNote'
 import { createMetricEntry } from './createMetricEntry'
 import { checkPatientTag } from './checkPatientTag'
 import { checkScheduledAppointments } from './checkScheduledAppointments'
+import { getFormAnswers } from './getFormAnswers'
+import { createGoal } from './createGoal'
+import { deleteGoal } from './deleteGoal'
+import { getSetPasswordLink } from './getSetPasswordLink'
+import {
+  pushFormResponseToHealthie,
+  pushFormResponsesToHealthie,
+} from './dataExchange'
+import { lockFormAnswerGroup } from './lockFormAnswer'
 
 export const actions = {
+  deleteGoal,
+  getSetPasswordLink,
   createAppointment,
   createTask,
   getAppointment,
@@ -36,6 +47,7 @@ export const actions = {
   createChartingNote,
   sendFormCompletionRequest,
   archivePatient,
+  createGoal,
   /**
    * There is bug in Healthie that prevents linking an address with a patient
    * Waiting for fix
@@ -57,4 +69,8 @@ export const actions = {
   createMetricEntry,
   checkPatientTag,
   checkScheduledAppointments,
+  getFormAnswers,
+  pushFormResponseToHealthie,
+  pushFormResponsesToHealthie,
+  lockFormAnswerGroup,
 }

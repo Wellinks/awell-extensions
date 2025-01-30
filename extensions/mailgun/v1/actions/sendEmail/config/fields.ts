@@ -1,5 +1,6 @@
 import { z, type ZodTypeAny } from 'zod'
 import { type Field, FieldType } from '@awell-health/extensions-core'
+import { CommaSeparatedEmailsValidationSchema } from '../../../../../../src/lib/awell'
 
 export const fields = {
   to: {
@@ -31,7 +32,12 @@ export const fields = {
 } satisfies Record<string, Field>
 
 export const FieldsValidationSchema = z.object({
-  to: z.string().email(),
+  to: CommaSeparatedEmailsValidationSchema.refine(
+    (emails) => emails.length > 0,
+    {
+      message: 'At least one email address is required',
+    }
+  ),
   subject: z.string(),
   body: z.string(),
 } satisfies Record<keyof typeof fields, ZodTypeAny>)

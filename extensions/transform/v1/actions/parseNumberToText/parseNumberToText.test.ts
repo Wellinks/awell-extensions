@@ -1,5 +1,5 @@
 import { parseNumberToText } from '.'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('Transform - Parse text to number', () => {
   const onComplete = jest.fn()
@@ -17,7 +17,7 @@ describe('Transform - Parse text to number', () => {
       settings: {},
     })
 
-    await parseNumberToText.onActivityCreated(
+    await parseNumberToText.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError
@@ -38,7 +38,7 @@ describe('Transform - Parse text to number', () => {
       settings: {},
     })
 
-    await parseNumberToText.onActivityCreated(
+    await parseNumberToText.onActivityCreated!(
       mockOnActivityCreateParams,
       onComplete,
       onError

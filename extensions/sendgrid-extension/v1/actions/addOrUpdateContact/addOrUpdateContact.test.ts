@@ -3,7 +3,7 @@ import {
   SendgridClientMockImplementation,
 } from '../../../__mocks__/client'
 import { addOrUpdateContact } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 jest.mock('../../../client', () => ({ SendgridClient }))
 
 describe('Add or update contact', () => {
@@ -40,7 +40,11 @@ describe('Add or update contact', () => {
       }
     )
 
-    await addOrUpdateContact.onActivityCreated(basePayload, onComplete, onError)
+    await addOrUpdateContact.onActivityCreated!(
+      basePayload,
+      onComplete,
+      onError
+    )
 
     expect(
       SendgridClientMockImplementation.marketing.contacts.addOrUpdate
@@ -70,7 +74,11 @@ describe('Add or update contact', () => {
       }
     )
 
-    await addOrUpdateContact.onActivityCreated(basePayload, onComplete, onError)
+    await addOrUpdateContact.onActivityCreated!(
+      basePayload,
+      onComplete,
+      onError
+    )
     expect(
       SendgridClientMockImplementation.marketing.contacts.addOrUpdate
     ).toHaveBeenCalledWith({

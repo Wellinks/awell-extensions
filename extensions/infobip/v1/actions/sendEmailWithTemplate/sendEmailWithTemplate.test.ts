@@ -3,7 +3,7 @@ import {
   mockedEmailWithTemplateData,
 } from '../../client/__mocks__'
 import { sendEmailWithTemplate } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -31,7 +31,7 @@ describe('Send email', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendEmailWithTemplate.onActivityCreated(
+    await sendEmailWithTemplate.onActivityCreated!(
       basePayload,
       onComplete,
       onError

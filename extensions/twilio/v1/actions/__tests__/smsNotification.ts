@@ -1,5 +1,5 @@
 import { smsNotification } from '../'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 describe('Simple sms notification action', () => {
   const onComplete = jest.fn()
@@ -11,7 +11,7 @@ describe('Simple sms notification action', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await smsNotification.onActivityCreated(
+    await smsNotification.onActivityCreated!(
       generateTestPayload({
         fields: {
           message: 'Message content',
@@ -22,6 +22,9 @@ describe('Simple sms notification action', () => {
           authToken: 'authToken',
           fromNumber: '+19144542596',
           messagingServiceSid: undefined,
+          addOptOutLanguage: undefined,
+          optOutLanguage: undefined,
+          language: undefined,
         },
       }),
       onComplete,
@@ -32,7 +35,7 @@ describe('Simple sms notification action', () => {
   })
 
   test('Should call the onError callback', async () => {
-    await smsNotification.onActivityCreated(
+    await smsNotification.onActivityCreated!(
       generateTestPayload({
         fields: {
           message: 'Message content',
@@ -43,6 +46,9 @@ describe('Simple sms notification action', () => {
           authToken: 'authToken',
           fromNumber: '+19144542596',
           messagingServiceSid: undefined,
+          addOptOutLanguage: undefined,
+          optOutLanguage: undefined,
+          language: undefined,
         },
       }),
       onComplete,

@@ -7,7 +7,7 @@ description: Healthie offers infrastructure for next generation digital health o
 
 Healthie offers infrastructure for next generation digital health organizations that provide virtual-first care. Healthie’s API-first and fully brandable suite of solutions (Scheduling, EMR, Client Engagement) enables healthcare builders to launch and scale best-in-class experiences for their members. Healthie also offers a built-in marketplace of business and clinical integrations used by our organizations.
 
-To learn more, visit [www.gethealthie.com](www.gethealthie.com).
+To learn more, visit [www.gethealthie.com](https://refer.gethealthie.com/dejebp5gm06x).
 
 ## Healthie x Awell
 
@@ -94,3 +94,26 @@ Checks that a patient has an active tag with given `id`
 ## Check scheduled appointments
 
 Checks that a patient has active scheduled appointment with given `appointmentTypeId`
+
+## Get form answers
+
+This action will retrieve the form answers for a answer group with a given ID. The complete form answers object will be stored as JSON and will be available in Awell Studio as a data point
+
+Example of a form answers response:
+
+```json
+[
+  {
+    "id": "640",
+    "label": "Please enter some information about the person who referred you.",
+    "answer": ""
+  },
+  {
+    "id": "641",
+    "label": "Name",
+    "answer": "Chris"
+  }
+]
+```
+
+Derrived data points can be used to then store the answer of a specific question in a data point. You can use the following JSONPath expression to retrieve the answer for a given question ID: `$[?(@.id == '<ID>')].answer`

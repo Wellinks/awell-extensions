@@ -3,7 +3,7 @@ import {
   mockedEmailData,
 } from '../../client/__mocks__'
 import { sendEmail } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../client')
 
@@ -31,7 +31,7 @@ describe('Send email', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendEmail.onActivityCreated(basePayload, onComplete, onError)
+    await sendEmail.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(InfobipClientMockImplementation.emailApi.send).toHaveBeenCalledWith(
       mockedEmailData

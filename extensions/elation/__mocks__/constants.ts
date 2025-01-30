@@ -1,10 +1,13 @@
-import { type AppointmentInput } from '../types/appointment'
-import { type FindContactsResponse } from '../types/contact'
-import { type CreateLabOrderResponse } from '../types/labOrder'
-import { type PostLetterResponse } from '../types/letter'
-import { type NonVisitNoteResponse } from '../types/nonVisitNote'
-import { type PatientInput } from '../types/patient'
-import { type PhysicianResponse } from '../types/physician'
+import {
+  type AppointmentInput,
+  type FindContactsResponse,
+  type CreateLabOrderResponse,
+  type GetLetterResponseType,
+  type PostLetterResponse,
+  type NonVisitNoteResponse,
+  type PatientInput,
+  type PhysicianResponse,
+} from '../types'
 
 export const patientExample: PatientInput = {
   first_name: 'Test',
@@ -18,6 +21,7 @@ export const patientExample: PatientInput = {
   sexual_orientation: 'unknown',
   primary_physician: 141127177601026,
   caregiver_practice: 141127173275652,
+  preferred_service_location: 141127173275555,
   dob: '1940-08-29',
   ssn: '123456789',
   race: 'Asian',
@@ -36,7 +40,14 @@ export const patientExample: PatientInput = {
       phone: '(213) 373 42 53',
       phone_type: 'Mobile',
     },
+    {
+      phone: '2485311234',
+      phone_type: 'Main',
+    },
   ],
+  patient_status: {
+    status: 'active',
+  },
 }
 
 export const appointmentExample: AppointmentInput = {
@@ -50,6 +61,12 @@ export const appointmentExample: AppointmentInput = {
   physician: 141127177601026,
   practice: 141127173275652,
   metadata: null,
+  status: {
+    status: 'Not Seen',
+    room: 'Room 123',
+    status_date: '2024-01-01T08:00:00',
+    status_detail: 'No show',
+  },
 }
 
 export const physicianResponseExample: PhysicianResponse = {
@@ -98,6 +115,33 @@ export const findContactResponseExample: FindContactsResponse = {
       npi: '2047990827',
       practice: 141127173275652,
       user: 4067,
+      specialties: [],
+    },
+  ],
+}
+
+export const searchContactsResponseExample: FindContactsResponse = {
+  count: 2,
+  results: [
+    {
+      id: 1,
+      first_name: 'Contact 1',
+      last_name: 'Contact 1',
+      middle_name: '',
+      npi: '1234567890',
+      practice: 1,
+      user: 1,
+      specialties: [],
+    },
+    {
+      id: 2,
+      first_name: 'Contact 2',
+      last_name: 'Contact 2',
+      middle_name: '',
+      npi: '1234567890',
+      practice: 1,
+      user: 1,
+      specialties: [],
     },
   ],
 }
@@ -136,3 +180,207 @@ export const labOrderResponseExample: CreateLabOrderResponse = {
   printable_view:
     'https://sandbox.elationemr.com/api/2.0/lab_orders/142256002957345/printable',
 }
+
+export const allergyExample = {
+  patientId: 123,
+  name: 'Penicillin',
+  startDate: '2023-01-01T00:00:00Z',
+  reaction: 'Hives',
+  severity: 'High',
+}
+
+export const visitNoteExample = {
+  patient: 123,
+  chart_date: '2010-06-10T17:57:35Z',
+  document_date: '2010-06-10T17:57:35Z',
+  type: 'Office Visit Note',
+  confidential: false,
+  template: 'Complete H&P (1 col)',
+  physician: 131074,
+  bullets: {
+    ROS: [
+      {
+        name: 'General',
+        value: 'Denies fever',
+        sequence: 0,
+      },
+      {
+        name: 'Eyes',
+        value: 'Denies visual abnormalities',
+        sequence: 1,
+      },
+    ],
+  },
+}
+
+export const createVisitNoteExample = {
+  patientId: 123,
+  type: 'Office Visit Note',
+  confidential: false,
+  template: 'Complete H&P (1 col)',
+  physicianId: 131074,
+  authorId: 111222,
+  text: 'This is a test note',
+  category: 'ROS',
+}
+
+export const historyExample = {
+  patientId: 123,
+  type: 'Past',
+  text: 'Test Past',
+}
+
+export const historyResponseExample = {
+  id: 64073957420,
+  type: 'Diet',
+  rank: 1,
+  text: 'Yogurt daily',
+  patient: 64072843265,
+  created_date: '2016-10-13T15:00:38Z',
+  deleted_date: null,
+}
+
+export const vitalsExample = {
+  patientId: 12345,
+  practiceId: 67890,
+  visitNoteId: 11111,
+  bmi: 25.5,
+  height: 175,
+  heightNote: 'no shoes',
+  weight: 70,
+  weightNote: 'in shorts',
+  oxygen: 98,
+  rr: 18,
+  temperature: 37,
+}
+
+export const vitalsResponseExample = {
+  id: 65098023184,
+  bmi: 21.52,
+  height: [
+    {
+      value: '70',
+      units: 'inches',
+      note: 'no shoes',
+    },
+  ],
+  weight: [
+    {
+      value: '150',
+      units: 'lbs',
+      note: 'in shorts',
+    },
+  ],
+  oxygen: [
+    {
+      value: '98',
+      units: '%',
+      note: 'good',
+    },
+  ],
+  rr: [
+    {
+      value: '20',
+      units: 'bpm',
+      note: 'deep',
+    },
+  ],
+  hr: [
+    {
+      value: '60',
+      units: 'bpm',
+      note: 'calm',
+    },
+  ],
+  hc: [
+    {
+      value: '30',
+      units: 'cm',
+      note: 'big',
+    },
+  ],
+  bmi_percentile: '12',
+  length_for_weight_percentile: '20',
+  patient: 64072843265,
+  practice: 65540,
+  visit_note: 99024920,
+  non_visit_note: null,
+  document_date: '2014-01-19T16:00:29Z',
+  chart_date: '2014-01-19T16:00:29Z',
+  signed_date: '2014-01-19T16:00:29Z',
+  signed_by: 131074,
+  created_date: '2016-05-02T13:30:07Z',
+  deleted_date: null,
+}
+
+export const getLetterResponseExample: GetLetterResponseType = {
+  id: 140754680348890,
+  send_to_contact: {
+    id: 64062029826,
+    first_name: 'First',
+    last_name: 'Last',
+    org_name: 'Org Name',
+    specialties: [{ id: 1335, name: 'Cardiology' }],
+    npi: 'NPI2222',
+  },
+  send_to_name: 'Test Name',
+  fax_to: '5555555555',
+  display_to: 'Test Name',
+  to_number: '5555555555',
+  subject: 'Test Subject',
+  body: 'Diagnosis:\nLength of Time needed:\n\nAmbulatory Devices:\n[x] Wheelchair\n[] Cane\n[] Walker\n[] Walker with Wheels and Seat (Rollator)\n[] Power Wheel Chair',
+  fax_status: 'success',
+  fax_attachments: true,
+  delivery_method: 'printed',
+  failure_unacknowledged: false,
+  direct_message_to: 'Test',
+  email_to: 'test@email.me',
+  viewed_at: '2021-05-11T21: 16: 23Z',
+  send_to_elation_user: 1234,
+  delivery_date: '2021-05-11T21: 16: 23Z',
+  with_archive: false,
+  is_processed: true,
+  letter_type: 'provider',
+  attachments: [
+    {
+      id: 64414089501,
+      document_type: 'MedsList',
+    },
+  ],
+  sign_date: '2021-05-11T21: 16: 23Z',
+  signed_by: 12323455,
+  tags: [],
+  document_date: '2021-05-11T21: 16: 23Z',
+  patient: 140754680086529,
+  practice: 140754674450436,
+}
+
+export const referralOrderExample = {
+  id: 1234567890,
+  authorization_for: 'Referral For Treatment, includes Consult Visit.',
+  auth_number: '1234567890',
+  consultant_name: 'Dr Testing Mc Testerson',
+  short_consultant_name: 'TEST',
+  icd10_codes: ['A01', 'B02'],
+}
+
+export const mockFindAppointmentsResponse = [
+  {
+    id: 1,
+    scheduled_date: '2025-01-15',
+    status: { status: 'Scheduled' },
+    reason: 'type 1',
+  },
+  {
+    id: 2,
+    scheduled_date: '2025-01-15',
+    status: { status: 'Scheduled' },
+    reason: 'type 2',
+  },
+  {
+    id: 123,
+    scheduled_date: '2025-01-15',
+    status: { status: 'Scheduled' },
+    reason: 'follow-up',
+  },
+]

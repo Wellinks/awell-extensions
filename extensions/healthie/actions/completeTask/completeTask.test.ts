@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { completeTask } from '../completeTask'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('completeTask action', () => {
   const onComplete = jest.fn()
@@ -18,7 +21,7 @@ describe('completeTask action', () => {
   })
 
   test('Should complete a task', async () => {
-    await completeTask.onActivityCreated(
+    await completeTask.onActivityCreated!(
       generateTestPayload({
         fields: {
           id: 'task-1',

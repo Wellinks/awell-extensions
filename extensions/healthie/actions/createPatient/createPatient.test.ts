@@ -1,46 +1,152 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
-import { createPatient } from '../createPatient'
+import { generateTestPayload } from '@/tests'
+import { HealthieSdk } from '@awell-health/healthie-sdk'
+import { createPatient as actionInterface } from '../createPatient'
+import { TestHelpers } from '@awell-health/extensions-core'
+import { FieldsValidationSchema } from './config'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('@awell-health/healthie-sdk', () => ({
+  HealthieSdk: jest.fn().mockImplementation(() => ({
+    client: {
+      mutation: jest.fn().mockResolvedValue({
+        createClient: {
+          user: {
+            id: 'patient-1',
+            set_password_link:
+              'https://securestaging.gethealthie.com/set_initial_password?signup_token=MOCK_TOKEN',
+          },
+        },
+      }),
+    },
+  })),
+}))
 
-describe('createPatient action', () => {
-  const onComplete = jest.fn()
+const mockedHealthieSdk = jest.mocked(HealthieSdk)
 
-  beforeAll(() => {
-    const mockSdk = getSdk as jest.Mock
-    mockSdk.mockImplementation(mockGetSdk)
-  })
+describe('Healthie - createPatient', () => {
+  const {
+    extensionAction: action,
+    onComplete,
+    onError,
+    helpers,
+    clearMocks,
+  } = TestHelpers.fromAction(actionInterface)
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    clearMocks()
+  })
+
+  test('Field validation', async () => {
+    const fields = {
+      first_name: 'Test',
+      last_name: 'Test',
+      legal_name: undefined,
+      email: 'test+lol11@test.com',
+      phone_number: undefined,
+      provider_id: undefined,
+      send_invite: false,
+    }
+
+    const result = FieldsValidationSchema.safeParse(fields)
+
+    if (!result.success) {
+      console.log(result.error.errors)
+    }
+
+    expect(result.success).toBe(true)
+
+    if (result.success) {
+      expect(result.data).toEqual({
+        first_name: 'Test',
+        last_name: 'Test',
+        email: 'test+lol11@test.com',
+        send_invite: false,
+      })
+    }
   })
 
   test('Should create a new patient', async () => {
-    await createPatient.onActivityCreated(
-      generateTestPayload({
+    await action.onEvent({
+      payload: generateTestPayload({
         fields: {
-          first_name: 'test',
-          last_name: 'test',
-          legal_name: undefined,
-          email: 'test@test.com',
-          phone_number: undefined,
+          first_name: 'Test',
+          last_name: 'Test',
+          legal_name: 'Official Test Name',
+          email: 'test+lol142@test.com',
+          phone_number: '+1234567890',
           provider_id: undefined,
-          skipped_email: undefined,
-          send_invite: undefined,
+          send_invite: false,
         },
         settings: {
+          apiUrl: 'https://staging-api.gethealthie.com/graphql',
           apiKey: 'apiKey',
-          apiUrl: 'test-url',
         },
       }),
       onComplete,
-      jest.fn()
-    )
+      onError,
+      helpers,
+    })
 
-    expect(mockGetSdkReturn.createPatient).toHaveBeenCalled()
+    expect(mockedHealthieSdk).toHaveBeenCalled()
+    expect(onComplete).toHaveBeenCalledWith({
+      data_points: {
+        healthiePatientId: 'patient-1',
+      },
+    })
+  })
+
+  test('Should create a new patient with skipped email false when email is empty string', async () => {
+    await action.onEvent({
+      payload: generateTestPayload({
+        fields: {
+          first_name: 'Test',
+          last_name: 'Test',
+          legal_name: 'Official Test Name',
+          email: '',
+          phone_number: '+1234567890',
+          provider_id: undefined,
+          send_invite: false,
+        },
+        settings: {
+          apiUrl: 'https://staging-api.gethealthie.com/graphql',
+          apiKey: 'apiKey',
+        },
+      }),
+      onComplete,
+      onError,
+      helpers,
+    })
+
+    expect(mockedHealthieSdk).toHaveBeenCalled()
+    expect(onComplete).toHaveBeenCalledWith({
+      data_points: {
+        healthiePatientId: 'patient-1',
+      },
+    })
+  })
+
+  test('Should create a new patient with skipped email false when email is undefined', async () => {
+    await action.onEvent({
+      payload: generateTestPayload({
+        fields: {
+          first_name: 'Test',
+          last_name: 'Test',
+          legal_name: 'Official Test Name',
+          email: undefined,
+          phone_number: '+1234567890',
+          provider_id: undefined,
+          send_invite: false,
+        },
+        settings: {
+          apiUrl: 'https://staging-api.gethealthie.com/graphql',
+          apiKey: 'apiKey',
+        },
+      }),
+      onComplete,
+      onError,
+      helpers,
+    })
+
+    expect(mockedHealthieSdk).toHaveBeenCalled()
     expect(onComplete).toHaveBeenCalledWith({
       data_points: {
         healthiePatientId: 'patient-1',

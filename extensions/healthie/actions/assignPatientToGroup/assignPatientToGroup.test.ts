@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { assignPatientToGroup } from '../assignPatientToGroup'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('assignPatientToGroup action', () => {
   const onComplete = jest.fn()
@@ -24,7 +27,7 @@ describe('assignPatientToGroup action', () => {
   ])(
     '$#. When groupId equals "$inputGroupId", then it should be called with "$assignedGroupId"',
     async ({ inputGroupId, assignedGroupId }) => {
-      await assignPatientToGroup.onActivityCreated(
+      await assignPatientToGroup.onActivityCreated!(
         generateTestPayload({
           fields: {
             id: 'patient-1',

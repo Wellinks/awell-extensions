@@ -2,10 +2,11 @@ import { type z } from 'zod'
 import {
   type statusSchema,
   type appointmentSchema,
+  type FindAppointmentFieldSchema,
 } from '../validation/appointment.zod'
 
 export type AppointmentInput = z.infer<typeof appointmentSchema>
-
+export type FindAppointmentFields = z.input<typeof FindAppointmentFieldSchema>
 /**
  * There is a difference between `input` and `output` objects in Elation,
  * some fields are readonly (not in input), some have different structure.
@@ -16,7 +17,7 @@ export interface AppointmentResponse
   id: number
   time_slot_type: string
   time_slot_status: string
-  status: Status
+  status: AnyStatus
   service_location?: ServiceLocation
   recurring_event_schedule: unknown // ? cannot find in docs
   billing?: BillingDetails
@@ -29,6 +30,12 @@ export interface AppointmentResponse
 interface Status extends z.infer<typeof statusSchema> {
   status_date: string
 }
+
+interface NotSeenStatus extends Status {
+  status_detail: string
+}
+
+type AnyStatus = Status | NotSeenStatus
 
 interface ServiceLocation {
   id: number
@@ -56,4 +63,13 @@ interface Payment {
   appointment: number
   create_date: string
   delete_date?: string | null
+}
+
+export interface FindAppointmentsParams {
+  patient: number
+  physician?: number
+  practice?: number
+  from_date?: string
+  to_date?: string
+  time_slot_type?: 'appointment'
 }

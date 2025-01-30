@@ -4,6 +4,12 @@ import {
   searchPatientsByPatientCode,
   stopCareFlow,
   isPatientEnrolledInCareFlow,
+  updateBaselineInfo,
+  addIdentifierToPatient,
+  getPatientByIdentifier,
+  startHostedPagesSession,
+  startCareFlowAndSession,
+  getDataPointValue,
 } from './v1/actions'
 import { type Extension } from '@awell-health/extensions-core'
 import { settings } from './settings'
@@ -22,11 +28,17 @@ export const Awell: Extension = {
   },
   settings,
   actions: {
+    addIdentifierToPatient,
+    getPatientByIdentifier,
     startCareFlow,
     updatePatient,
     stopCareFlow,
     searchPatientsByPatientCode,
     isPatientEnrolledInCareFlow,
+    updateBaselineInfo,
+    startHostedPagesSession,
+    startCareFlowAndSession,
+    getDataPointValue,
     // deletePatient, Deleting the patient who is currently enrolled in the pathway seems dangerous
   },
   webhooks,

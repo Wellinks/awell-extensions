@@ -1,5 +1,5 @@
 import { createBooking } from './createBooking'
-import { generateTestPayload } from '../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import { mockReturnValue, sampleBooking } from '../../__mocks__/calComApi'
 
 jest.mock('../../calComApi', () => jest.fn(() => mockReturnValue))
@@ -32,7 +32,7 @@ describe('Create booking', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await createBooking.onActivityCreated(basePayload, onComplete, onError)
+    await createBooking.onActivityCreated!(basePayload, onComplete, onError)
 
     expect(mockReturnValue.createBooking).toHaveBeenCalledWith({
       eventTypeId: sampleBooking.eventTypeId,

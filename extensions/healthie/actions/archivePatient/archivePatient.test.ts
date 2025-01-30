@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { archivePatient } from '../archivePatient'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('archivePatient action', () => {
   const onComplete = jest.fn()
@@ -18,7 +21,7 @@ describe('archivePatient action', () => {
   })
 
   test('Should archive a patient', async () => {
-    await archivePatient.onActivityCreated(
+    await archivePatient.onActivityCreated!(
       generateTestPayload({
         pathway: {
           id: 'pathway-id',

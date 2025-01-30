@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { cancelAppointment } from '../cancelAppointment'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('cancelAppointment action', () => {
   const onComplete = jest.fn()
@@ -18,7 +21,7 @@ describe('cancelAppointment action', () => {
   })
 
   test('Should cancel an appointment', async () => {
-    await cancelAppointment.onActivityCreated(
+    await cancelAppointment.onActivityCreated!(
       generateTestPayload({
         fields: {
           id: 'appointment-1',

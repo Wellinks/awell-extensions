@@ -2,10 +2,13 @@ import { validate, type Action } from '@awell-health/extensions-core'
 import { Category } from '@awell-health/extensions-core'
 import { z, ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { HealthieError, mapHealthieToActivityError } from '../../errors'
-import { getSdk } from '../../gql/sdk'
-import { initialiseClient } from '../../graphqlClient'
-import { settingsValidationSchema, type settings } from '../../settings'
+import {
+  HealthieError,
+  mapHealthieToActivityError,
+} from '../../lib/sdk/graphql-codegen/errors'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import { initialiseClient } from '../../lib/sdk/graphql-codegen/graphqlClient'
+import { SettingsValidationSchema, type settings } from '../../settings'
 import { fields, FieldsValidationSchema } from './config'
 
 export const createMetricEntry: Action<typeof fields, typeof settings> = {
@@ -22,7 +25,7 @@ export const createMetricEntry: Action<typeof fields, typeof settings> = {
         fields: { userId, category, metricStat },
       } = validate({
         schema: z.object({
-          settings: settingsValidationSchema,
+          settings: SettingsValidationSchema,
           fields: FieldsValidationSchema,
         }),
         payload,

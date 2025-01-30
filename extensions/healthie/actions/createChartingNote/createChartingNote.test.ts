@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { createChartingNote } from '../createChartingNote'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('createChartingNote action', () => {
   const onComplete = jest.fn()
@@ -18,14 +21,14 @@ describe('createChartingNote action', () => {
   })
 
   test('Should create a charting note', async () => {
-    await createChartingNote.onActivityCreated(
+    await createChartingNote.onActivityCreated!(
       generateTestPayload({
         fields: {
           form_id: 'form-template-1',
           healthie_patient_id: 'patient-1',
           note_content: 'Test content',
           marked_locked: true,
-          appointment_id: 'appointment-1'
+          appointment_id: 'appointment-1',
         },
         settings: {
           apiKey: 'apiKey',

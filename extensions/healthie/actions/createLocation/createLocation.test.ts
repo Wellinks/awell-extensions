@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { createLocation } from '../createLocation'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('createLocation action', () => {
   const onComplete = jest.fn()
@@ -18,7 +21,7 @@ describe('createLocation action', () => {
   })
 
   test('Should create a location', async () => {
-    await createLocation.onActivityCreated(
+    await createLocation.onActivityCreated!(
       generateTestPayload({
         fields: {
           id: 'patient-1',

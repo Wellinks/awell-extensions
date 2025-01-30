@@ -1,10 +1,13 @@
-import { generateTestPayload } from '../../../../src/tests'
-import { getSdk } from '../../gql/sdk'
-import { mockGetSdk, mockGetSdkReturn } from '../../gql/__mocks__/sdk'
+import { generateTestPayload } from '@/tests'
+import { getSdk } from '../../lib/sdk/graphql-codegen/generated/sdk'
+import {
+  mockGetSdk,
+  mockGetSdkReturn,
+} from '../../lib/sdk/graphql-codegen/generated/__mocks__/sdk'
 import { sendChatMessage } from '../sendChatMessage'
 
-jest.mock('../../gql/sdk')
-jest.mock('../../graphqlClient')
+jest.mock('../../lib/sdk/graphql-codegen/generated/sdk')
+jest.mock('../../lib/sdk/graphql-codegen/graphqlClient')
 
 describe('sendChatMessage action', () => {
   const onComplete = jest.fn()
@@ -18,7 +21,7 @@ describe('sendChatMessage action', () => {
   })
 
   test("Should create a new message when it doesn't exist", async () => {
-    await sendChatMessage.onActivityCreated(
+    await sendChatMessage.onActivityCreated!(
       generateTestPayload({
         fields: {
           healthie_patient_id: 'patient-1',
@@ -63,7 +66,7 @@ describe('sendChatMessage action', () => {
           },
         }),
     })
-    await sendChatMessage.onActivityCreated(
+    await sendChatMessage.onActivityCreated!(
       generateTestPayload({
         fields: {
           healthie_patient_id: 'patient-1',
@@ -133,7 +136,7 @@ describe('sendChatMessage action', () => {
           },
         }),
     })
-    await sendChatMessage.onActivityCreated(
+    await sendChatMessage.onActivityCreated!(
       generateTestPayload({
         fields: {
           healthie_patient_id: 'patient-1',

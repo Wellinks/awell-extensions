@@ -1,11 +1,17 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { TestHelpers } from '@awell-health/extensions-core'
+import { ZodError } from 'zod'
+import { generateTestPayload } from '@/tests'
 import { updatePatient } from './updatePatient'
 
 jest.mock('../../sdk/awellSdk')
 
 describe('Update patient', () => {
-  const onComplete = jest.fn()
-  const onError = jest.fn()
+  const { onComplete, onError, helpers, extensionAction, clearMocks } =
+    TestHelpers.fromAction(updatePatient)
+
+  beforeEach(() => {
+    clearMocks()
+  })
 
   beforeEach(() => {
     onComplete.mockClear()
@@ -13,14 +19,14 @@ describe('Update patient', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await updatePatient.onActivityCreated(
-      generateTestPayload({
+    await extensionAction.onEvent({
+      payload: generateTestPayload({
         fields: {
           patientCode: 'patientCode',
           firstName: 'John',
           lastName: 'Doe',
           birthDate: '1993-11-30',
-          email: 'john.doe@awellhealth.com',
+          email: 'john.doe@awellhealth.com ',
           phone: undefined,
           mobilePhone: undefined,
           street: 'Doe Street',
@@ -29,23 +35,22 @@ describe('Update patient', () => {
           city: 'Doe City',
           zip: '1234',
           preferredLanguage: 'en',
-          sex: 'MALE',
+          sex: 'male',
+          nationalRegistryNumber: undefined,
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
+      onError,
+      helpers,
+    })
     expect(onComplete).toHaveBeenCalled()
     expect(onError).not.toHaveBeenCalled()
   })
 
   test('Should call onError when email is not an actual email address the onComplete callback', async () => {
-    await updatePatient.onActivityCreated(
-      generateTestPayload({
+    const resp = extensionAction.onEvent({
+      payload: generateTestPayload({
         fields: {
           patientCode: undefined,
           firstName: undefined,
@@ -61,32 +66,21 @@ describe('Update patient', () => {
           zip: undefined,
           preferredLanguage: undefined,
           sex: undefined,
+          nationalRegistryNumber: undefined,
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
-    expect(onComplete).not.toHaveBeenCalled()
-    expect(onError).toHaveBeenCalledWith({
-      events: expect.arrayContaining([
-        expect.objectContaining({
-          error: {
-            category: 'WRONG_INPUT',
-            message:
-              'Validation error: Value passed is not an email address at "fields.email"',
-          },
-        }),
-      ]),
+      onError,
+      helpers,
     })
+    await expect(resp).rejects.toThrow(ZodError)
+    expect(onComplete).not.toHaveBeenCalled()
   })
 
   test('Should call onError when phone is not a possible phone number', async () => {
-    await updatePatient.onActivityCreated(
-      generateTestPayload({
+    const resp = extensionAction.onEvent({
+      payload: generateTestPayload({
         fields: {
           patientCode: undefined,
           firstName: undefined,
@@ -102,26 +96,15 @@ describe('Update patient', () => {
           zip: undefined,
           preferredLanguage: undefined,
           sex: undefined,
+          nationalRegistryNumber: undefined,
         },
-        settings: {
-          apiUrl: 'an-api-url',
-          apiKey: 'an-api-key',
-        },
+        settings: {},
       }),
       onComplete,
-      onError
-    )
-    expect(onComplete).not.toHaveBeenCalled()
-    expect(onError).toHaveBeenCalledWith({
-      events: expect.arrayContaining([
-        expect.objectContaining({
-          error: {
-            category: 'WRONG_INPUT',
-            message:
-              'Validation error: Phone number is invalid (NOT_A_NUMBER) at "fields.phone"',
-          },
-        }),
-      ]),
+      onError,
+      helpers,
     })
+    await expect(resp).rejects.toThrow(ZodError)
+    expect(onComplete).not.toHaveBeenCalled()
   })
 })

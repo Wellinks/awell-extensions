@@ -1,12 +1,15 @@
-import { generateTestPayload } from '../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import { sendFax } from './sendFax'
+import fetchMock from 'jest-fetch-mock'
 
 describe('send fax action', () => {
   const onComplete = jest.fn()
   const onError = jest.fn()
+  fetchMock.enableMocks()
 
-  test('Should not send a fax', async () => {
-    await sendFax.onActivityCreated(
+  fetchMock.mockResponseOnce(JSON.stringify({ Success: true, Result: 'asdf' }))
+  test('Mock send a fax - success', async () => {
+    await sendFax.onActivityCreated!(
       generateTestPayload({
         fields: {
           productId: 'wrongproductid',
@@ -27,7 +30,12 @@ describe('send fax action', () => {
       onError
     )
 
-    expect(onComplete).not.toHaveBeenCalled()
-    expect(onError).toHaveBeenCalled()
+    expect(onComplete).toHaveBeenCalledWith({
+      data_points: {
+        faxId: 'asdf',
+      },
+      events: expect.any(Array),
+    })
+    expect(onError).not.toHaveBeenCalled()
   })
 })

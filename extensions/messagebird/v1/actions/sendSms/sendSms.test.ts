@@ -1,5 +1,5 @@
 import { sendSms } from '..'
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 
 jest.mock('../../../common/sdk/messagebirdSdk')
 
@@ -13,7 +13,7 @@ describe('Send SMS', () => {
   })
 
   test('Should call the onComplete callback', async () => {
-    await sendSms.onActivityCreated(
+    await sendSms.onActivityCreated!(
       generateTestPayload({
         fields: {
           originator: 'TestMessage', // "TestMessage" can be used for test messages

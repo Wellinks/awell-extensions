@@ -58,6 +58,8 @@ Checks whether the patient is already enrolled in a care flow definition. The ca
 
 ### Search patients by patient code
 
+Note that this action is deprecated and we recommend using [identifiers](https://developers.awellhealth.com/awell-orchestration/docs/misc/patient-identifiers) instead.
+
 Search whether, apart from the patient currently enrolled in the care flow, another patient with the same `patient_code` already exists.
 
 **Data points:**
@@ -65,6 +67,23 @@ Search whether, apart from the patient currently enrolled in the care flow, anot
 1. patientAlreadyExists: a boolean which will be true if minimum one patient with the patient code already exists.
 2. numberOfPatientsFound: the number of patients found with the same patient code.
 3. awellPatientIds: a comma-separated string of all Awell patient ids (except the current patient) that have the same patient code as the patient currently enrolled in the care flow. Will return an empty string when there are no other patients with the same patient code.
+
+### Get patient by identifier
+
+This action lets you check if a patient with a specific identifier already exists in Awell. It's particularly useful when a patient's identity is initially anonymous during the start of the care flow, but later becomes identifiable through the identifiers collected during the care flow. This check ensures whether a patient with that identifier is already present or not.
+
+### Add identifier to patient
+
+This action allows you to add a unique identifier to the current patient's profile. If the patient already has an identifier with the same system but a different value, this action will update the existing identifier with the new value provided. 
+
+First, it checks if this identifier (system and value) is already associated with another patient. If it's safe to proceed, it will add or update the identifier as needed. However, if another patient already has this identifier, the action will stop and notify you, preventing duplicates. To avoid conflicts, we recommend first running the "Get patient by identifier" action to check for any existing matches.
+
+### Get data point value
+
+This action allows you to read the most recent data point value of a given data point definition id from a care flow different from the current one. The action returns multiple data points, each with a different value type. Pick the one you need from the returned data points based on the value type of the data point you want to read the value from.
+
+**Example:**
+If the data point you want to read the value from is of type `number`, then you should use the `valueNumber` data point.
 
 ## Webhooks
 

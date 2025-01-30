@@ -1,5 +1,6 @@
 import { getAppointment } from '../getAppointment'
 import { appointmentExample } from '../../__mocks__/constants'
+import { isNil } from 'lodash'
 
 jest.mock('../../client')
 
@@ -19,7 +20,7 @@ describe('Simple get appointment action', () => {
   })
 
   test('Should return with correct data_points', async () => {
-    await getAppointment.onActivityCreated(
+    await getAppointment.onActivityCreated!(
       {
         fields: {
           appointmentId: '1',
@@ -38,11 +39,12 @@ describe('Simple get appointment action', () => {
       scheduled_date,
       telehealth_details,
       metadata,
+      status,
       ...appointmentFields
     } = appointmentExample
     expect(onComplete).toHaveBeenCalled()
     expect(onComplete).toBeCalledWith({
-      data_points: {
+      data_points: expect.objectContaining({
         ...appointmentFields,
         scheduledDate: scheduled_date,
         telehealthDetails: telehealth_details,
@@ -51,7 +53,8 @@ describe('Simple get appointment action', () => {
         practiceId: String(practice),
         duration: String(duration),
         serviceLocationId: String(service_location),
-      },
+        ...(!isNil(status) && { status: JSON.stringify(status) }),
+      }),
     })
   })
 })

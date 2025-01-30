@@ -1,4 +1,4 @@
-import { generateTestPayload } from '../../../../../src/tests'
+import { generateTestPayload } from '@/tests'
 import {
   mockedMakeAPIClient,
   mockedQuestionnaireResponseId,
@@ -23,7 +23,7 @@ describe('getQuestionnaireResponse', () => {
   }
 
   it('should get questionnaire response', async () => {
-    await getQuestionnaireResponse.onActivityCreated(
+    await getQuestionnaireResponse.onActivityCreated!(
       generateTestPayload(payload),
       onComplete,
       onError
